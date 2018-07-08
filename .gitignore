@@ -1,0 +1,10 @@
+.vscode
+.DS_Store
+.build_*
+build_*
+__pycache__
+*.pyc
+**/output
+.build*
+.cache
+systemtests/reports

@@ -1,0 +1,160 @@
+version: '2'
+
+services:
+
+  provisioner:
+    image: aws-local-provisioner:latest
+    environment:
+      S3_HOST: http://aws-mock:3000
+      SQS_HOST: http://aws-mock:3001
+      SSM_HOST: http://aws-mock:3002
+      SNS_HOST: http://aws-mock:3003
+      KINESIS_HOST: http://aws-mock:3004
+      DYNAMODB_HOST: http://aws-mock:3005
+      AWS_LOCAL_TEMPLATE_PATH: /aws-local/example-assets/local_template.yaml
+      # SOME_BUCKET_NAME: some-bucket
+      # SOME_OTHER_BUCKET: |
+      #   name: some-other-bucket
+      # SOME_QUEUE_NAME: |
+      #   name: some-queue
+      # SOME_TOPIC_NAME: |
+      #   name: some-topic
+      # SOME_KEY_COMBO: |
+      #   key: some
+      #   value: key-value-combo
+      # SOME_STREAM_NAME: some-stream
+      # SOME_QUEUE_TO_TOPIC_SUB: |
+      #   topic_name: some-topic
+      #   queue_name: some-queue
+      # SOME_QUEUE_TO_BUCKET_SUB: |
+      #   bucket: some-bucket
+      #   queue_name: some-queue
+      #   events:
+      #     - s3:ObjectCreated:*
+      # SOME_S3_UPLOAD: |
+      #   filename: /provisioner/requirements.txt
+      #   key: requirements.txt
+      #   bucket: some-bucket
+      # SOME_DYNAMODB_TABLE: |
+      #   name: some-table
+      #   attributes:
+      #     mainId: S
+      #     createdAt: S
+      #     name: S
+      #   key_schema:
+      #     mainId: HASH
+      #     createdAt: RANGE
+      #   throughput:
+      #     read: 10
+      #     write: 5
+      #   global_secondary_indexes:
+      #     - index_name: SomeGlobalIndex
+      #       projection: ALL
+      #       throughput:
+      #         read: 10
+      #         write: 5
+      #       key_schema:
+      #         name: HASH
+      #         createdAt: RANGE
+      #   local_secondary_indexes:
+      #     - index_name: SomeLocalIndex
+      #       projection: ALL
+      #       key_schema:
+      #         mainId: HASH
+      #         name: RANGE
+    volumes:
+      - ./awsmock-credentials:/root/.aws/credentials
+      - ./example-assets:/aws-local/example-assets
+    depends_on:
+      - aws-mock
+
+  moto-provisioner:
+    image: aws-local-provisioner:latest
+    environment:
+      MOCK_AWS_HOST: moto-aws-mock:3000
+      AWS_LOCAL_TEMPLATE: |
+        version: '1.0'
+        resources:
+          storage_bucket:
+            type: bucket
+            name: storage-bucket
+          notifications_queue:
+            type: queue
+            name: notifications-queue
+          notifications_topic:
+            type: topic
+            name: notifications-topic
+          file_to_upload:
+            type: s3_upload
+            filename: /provisioner/requirements.txt
+            key: requirements.txt
+            bucket: storage-bucket
+          stream:
+            type: stream
+            name: event-stream
+          crazy_stream:
+            type: stream
+            name: crazy-stream
+          ssm_keys:
+            type: ssm_parameter
+            key: some-secret
+            value: oh-so-secret
+          topic_sub:
+            type: subscription:queue:topic
+            topic_name: notifications-topic
+            queue_name: notifications-queue
+          bucket_sub:
+            type: subscription:queue:bucket
+            bucket: storage-bucket
+            queue_name: notifications-queue
+            events:
+              - s3:ObjectCreated:*
+          # dynamodb_table:
+          #   type: dynamodb_table
+          #   name: storage-table
+          #   attributes:
+          #     mainId: S
+          #     createdAt: S
+          #     name: S
+          #   key_schema:
+          #     mainId: HASH
+          #     createdAt: RANGE
+          #   throughput:
+          #     read: 10
+          #     write: 5
+          #   global_secondary_indexes:
+          #     - index_name: SomeGlobalIndex
+          #       projection: ALL
+          #       throughput:
+          #         read: 10
+          #         write: 5
+          #       key_schema:
+          #         name: HASH
+          #         createdAt: RANGE
+          #   local_secondary_indexes:
+          #     - index_name: SomeLocalIndex
+          #       projection: ALL
+          #       key_schema:
+          #         mainId: HASH
+          #         name: RANGE
+    volumes:
+      - ./awsmock-credentials:/root/.aws/credentials
+      - ./example-assets:/aws-local/example-assets
+    depends_on:
+      - moto-aws-mock
+
+  # -------- AWS Mocks --------
+
+  aws-mock:
+    image: localstack/localstack:0.8.6
+    environment:
+      DEFAULT_REGION: eu-west-1
+      SERVICES: s3:3000,sqs:3001,ssm:3002,sns:3003,kinesis:3004,dynamodb:3005
+      FORCE_NONINTERACTIVE: 'true'
+      HOSTNAME: aws-mock
+      HOSTNAME_EXTERNAL: aws-mock
+      DEBUG: 1
+
+  moto-aws-mock:
+    image: aws-local-moto-server:latest
+    build: moto_host

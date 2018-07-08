@@ -1,0 +1,75 @@
+version: '1.0'
+
+resources:
+
+  some_bucket:
+    type: bucket
+    name: some-bucket
+
+  some_other_bucket:
+    type: bucket
+    name: some-other-bucket
+
+  some_queue:
+    type: queue
+    name: some-queue
+
+  some_topic:
+    type: topic
+    name: some-topic
+
+  some_keys:
+    type: ssm_parameter
+    key: some
+    value: key-value-combo
+
+  some_stream:
+    type: stream
+    name: some-stream
+
+  some_queue_to_topic_subscription:
+    type: subscription:queue:topic
+    topic_name: some-topic
+    queue_name: some-queue
+
+  some_bucket_to_topic_subscription:
+    type: subscription:queue:bucket
+    bucket: some-bucket
+    queue_name: some-queue
+    events:
+      - s3:ObjectCreated:*
+
+  some_s3_upload:
+    type: s3_upload
+    filename: /provisioner/requirements.txt
+    key: requirements.txt
+    bucket: some-bucket
+
+  some_dynamodb_table:
+    type: dynamodb_table
+    name: some-table
+    attributes:
+      mainId: S
+      createdAt: S
+      name: S
+    key_schema:
+      mainId: HASH
+      createdAt: RANGE
+    throughput:
+      read: 10
+      write: 5
+    global_secondary_indexes:
+      - index_name: SomeGlobalIndex
+        projection: ALL
+        throughput:
+          read: 10
+          write: 5
+        key_schema:
+          name: HASH
+          createdAt: RANGE
+    local_secondary_indexes:
+      - index_name: SomeLocalIndex
+        projection: ALL
+        key_schema:
+          mainId: HASH
+          name: RANGE
