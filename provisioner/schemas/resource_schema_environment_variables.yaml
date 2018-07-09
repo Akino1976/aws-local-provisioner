@@ -1,0 +1,384 @@
+$schema: http://json-schema.org/draft-04/schema#
+type: object
+properties:
+  bucket:
+    description: |
+      'Read from environment variables matching the format *BUCKET_NAME.
+      Examples
+        STORAGE_BUCKET_NAME: storage-bucket-eu-west-1
+        OTHER_BUCKET_NAME: |
+          name: other-bucket-eu-west-1
+      '
+    oneOf:
+      - $ref: '#/definitions/AmazonS3BucketName'
+      - type: object
+        required:
+          - name
+        properties:
+          name:
+            $ref: '#/definitions/AmazonS3BucketName'
+        additionalProperties: false
+  queue:
+    description: |
+      'Read from environment variables matching the format *QUEUE_NAME.
+      Example
+        NOTIFICATIONS_QUEUE_NAME: notifications-queue-eu-west-1
+        OTHER_QUEUE_NAME: |
+          name: other-queue-eu-west-1
+      '
+    oneOf:
+      - $ref: '#/definitions/AmazonSQSQueueName'
+      - type: object
+        required:
+          - name
+        properties:
+          name:
+            $ref: '#/definitions/AmazonSQSQueueName'
+        additionalProperties: false
+  topic:
+    description: |
+      'Read from environment variables matching the format *TOPIC_NAME.
+      Example:
+        NOTIFICATIONS_TOPIC_NAME: notifications-topic-eu-west-1
+        OTHER_TOPIC_NAME: |
+          name: other-topic-eu-west-1
+      '
+    oneOf:
+      - $ref: '#/definitions/AmazonSNSTopicName'
+      - type: object
+        required:
+          - name
+        properties:
+          name:
+            $ref: '#/definitions/AmazonSNSTopicName'
+        additionalProperties: false
+
+  stream:
+    description: |
+      'Read from environment variables matching the format *STREAM_NAME.
+      Example:
+        NOTIFICATIONS_STREAM_NAME: notifications-stream-eu-west-1
+        OTHER_STREAM_NAME: |
+          name: other-stream-eu-west-1
+      '
+    oneOf:
+      - $ref: '#/definitions/AmazonKinesisStreamName'
+      - type: object
+        required:
+          - name
+        properties:
+          name:
+            $ref: '#/definitions/AmazonKinesisStreamName'
+        additionalProperties: false
+
+  ssm_parameter:
+    description: |
+      'Read from environment variables matching the format *SSM_PARAMETER.
+      Example:
+        MY_SECRET_SSM_PARAMETER: |
+          key: some-secret
+          value: oh-so-secret
+      '
+    type: object
+    required:
+      - key
+      - value
+    properties:
+      key:
+        type: string
+        minLength: 1
+        maxLength: 2048
+      value:
+        type: string
+        minLength: 1
+        maxLength: 4096
+    additionalProperties: false
+
+  s3_upload:
+    description: |
+      'Read from environment variables matching the format *S3_UPLOAD.
+      Example:
+        VERY_IMPORTANT_S3_UPLOAD: |
+          filename: /provisioner/secrets.json
+          key: secrets.json
+          bucket: storage-bucket-eu-west-1
+      '
+    type: object
+    required:
+      - filename
+      - key
+      - bucket
+    properties:
+      filename:
+        $ref: '#/definitions/LocalFileName'
+      key:
+        $ref: '#/definitions/AmazonS3KeyName'
+      bucket:
+        $ref: '#/definitions/AmazonS3BucketName'
+
+  subscription_queue_bucket:
+    description: |
+      'Read from environment variables matching the format *QUEUE_TO_BUCKET_SUB.
+      Example:
+        NOTIFICATIONS_QUEUE_TO_BUCKET_SUB: |
+          bucket: storage-bucket-eu-west-1
+          queue_name: notifications-queue-eu-west-1
+          events:
+            - s3:ObjectCreated:*
+      '
+    type: object
+    required:
+      - bucket
+      - queue_name
+      - events
+    properties:
+      bucket:
+        $ref: '#/definitions/AmazonS3BucketName'
+      queue_name:
+        $ref: '#/definitions/AmazonSQSQueueName'
+      events:
+        $ref: '#/definitions/AmazonS3EventList'
+    additionalProperties: false
+
+  subscription_queue_topic:
+    description: |
+      'Read from environment variables matching the format *QUEUE_TO_TOPIC_SUB.
+      Example:
+        NOTIFICATIONS_QUEUE_TO_TOPIC_SUB: |
+          topic_name: notifications-topic-eu-west-1
+          queue_name: notifications-queue-eu-west-1
+      '
+    type: object
+    required:
+      - topic_name
+      - queue_name
+    properties:
+      topic_name:
+        $ref: '#/definitions/AmazonSNSTopicName'
+      queue_name:
+        $ref: '#/definitions/AmazonSQSQueueName'
+    additionalProperties: false
+
+  dynamodb_table:
+    description: |
+      'Read from environment variables matching the format *DYNAMODB_TABLE.
+      Example:
+        STORAGE_DYNAMODB_TABLE: |
+          name: storage-table
+          attributes:
+            mainId: S
+            createdAt: S
+            name: S
+          key_schema:
+            mainId: HASH
+            createdAt: RANGE
+          throughput:
+            read: 1
+            write: 1
+      '
+    type: object
+    required:
+      - name
+      - attributes
+      - key_schema
+      - throughput
+    properties:
+      name:
+        type: string
+        description: |
+          The name of the table to create.
+          See here for description:
+          https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-naming-rules
+        maxLength: 255
+        minLength: 3
+        pattern: '[a-zA-Z0-9_.-]+'
+      attributes:
+        schema:
+          $ref: '#/definitions/AmazonDynamoDBAttributes'
+      key_schema:
+        schema:
+          $ref: '#/definitions/AmazonDynamoDBKeySchema'
+      throughput:
+        schema:
+          $ref: '#/definitions/AmazonDynamoDBThroughput'
+      global_secondary_indexes:
+        type: array
+        minLength: 1
+        items:
+          $ref: '#/definitions/AmazonDynamoDBGlobalSecondaryIndex'
+      local_secondary_indexes:
+        type: array
+        minLength: 1
+        items:
+          $ref: '#/definitions/AmazonDynamoDBLocalSecondaryIndex'
+    additionalProperties: false
+
+definitions:
+
+  AmazonS3BucketName:
+    type: string
+    description: |
+      The name of the bucket.
+      Must only contain lowercase letters,
+      numbers, dots (.) and dashes (-).
+    maxLength: 63
+    minLength: 1
+
+  AmazonS3KeyName:
+    type: string
+    minLength: 1
+    description: |
+      The key for which to store it on.
+      See here for valid key names:
+      https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html#object-keys
+
+  AmazonS3EventList:
+    type: array
+    description: List of possible S3 bucket events.
+    minLength: 1
+    items:
+      type: string
+      enum:
+        - s3:ObjectCreated:*
+        - s3:ObjectCreated:Put
+        - s3:ObjectCreated:Post
+        - s3:ObjectCreated:Copy
+        - s3:ObjectCreated:CompleteMultipartUpload
+        - s3:ObjectRemoved:*
+        - s3:ObjectRemoved:Delete
+        - s3:ObjectRemoved:DeleteMarkerCreated
+        - s3:ReducedRedundancyLostObject
+
+  AmazonSQSQueueName:
+    type: string
+    description: |
+      The name of the queue.
+      Must only contain alphanumeric characters, hyphens (-),
+      and underscores.
+    maxLength: 80
+    minLength: 1
+
+  AmazonSNSTopicName:
+    type: string
+    description: |
+      The name of the topic.
+      Must only contain alphanumeric characters, hyphens (-),
+      and underscores.
+    maxLength: 120
+    minLength: 1
+
+  AmazonKinesisStreamName:
+    type: string
+    description: |
+      The name of the topic.
+      Must only contain alphanumeric characters, hyphens (-),
+      underscores (_) and dots (.).
+    maxLength: 128
+    minLength: 1
+    pattern: '[a-zA-Z0-9_.-]+'
+
+  AmazonDynamoDBAttributes:
+    type: object
+    description: |
+      The AttributeDefinition as a stripped down version.
+      Keys are mapped to AttributeName and values corresponds
+      with the AttributeType property.
+    additionalProperties:
+      type: string
+      enum:
+        - 'N'
+        - 'S'
+        - 'B'
+
+  AmazonDynamoDBKeySchema:
+    type:
+      object
+    description: |
+      The KeySchema as a stripped down version.
+      Keys are mapped to AttributeName and values corresponds
+      with the KeyType property.
+    additionalProperties:
+      type: string
+      enum:
+        - HASH
+        - RANGE
+
+  AmazonDynamoDBThroughput:
+    type: object
+    required:
+      - read
+      - write
+    properties:
+      read:
+        type: integer
+      write:
+        type: integer
+    additionalProperties: false
+
+  AmazonDynamoDBGlobalSecondaryIndex:
+    type: object
+    required:
+      - index_name
+      - key_schema
+      - throughput
+      - projection
+    properties:
+      index_name:
+        type: string
+        description: |
+          The name of the index to create.
+          See here for description:
+          https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-naming-rules
+        maxLength: 255
+        minLength: 3
+        pattern: '[a-zA-Z0-9_.-]+'
+      key_schema:
+        schema:
+          $ref: '#/definitions/AmazonDynamoDBKeySchema'
+      throughput:
+        schema:
+          $ref: '#/definitions/AmazonDynamoDBThroughput'
+      projection:
+        type: string
+        description: |
+          Describes how the index should be projected.
+          Currently only supports 'ALL' for now.
+        enum:
+          - ALL
+    additionalProperties: false
+
+  AmazonDynamoDBLocalSecondaryIndex:
+    type: object
+    required:
+      - index_name
+      - key_schema
+      - projection
+    properties:
+      index_name:
+        type: string
+        description: |
+          The name of the index to create.
+          See here for description:
+          https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-naming-rules
+        maxLength: 255
+        minLength: 3
+        pattern: '[a-zA-Z0-9_.-]+'
+      key_schema:
+        schema:
+          $ref: '#/definitions/AmazonDynamoDBKeySchema'
+      projection:
+        type: string
+        description: |
+          Describes how the index should be projected.
+          Currently only supports 'ALL' for now.
+        enum:
+          - ALL
+    additionalProperties: false
+
+  LocalFileName:
+    type: string
+    minLength: 1
+    description: |
+      The (preferably, absolute) filename of a file in
+      the docker container.
+      To use _external files_, you can simply mount it in.

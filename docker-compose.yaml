@@ -12,56 +12,58 @@ services:
       KINESIS_HOST: http://aws-mock:3004
       DYNAMODB_HOST: http://aws-mock:3005
       AWS_LOCAL_TEMPLATE_PATH: /aws-local/example-assets/local_template.yaml
-      # SOME_BUCKET_NAME: some-bucket
-      # SOME_OTHER_BUCKET: |
-      #   name: some-other-bucket
-      # SOME_QUEUE_NAME: |
-      #   name: some-queue
-      # SOME_TOPIC_NAME: |
-      #   name: some-topic
-      # SOME_KEY_COMBO: |
-      #   key: some
-      #   value: key-value-combo
-      # SOME_STREAM_NAME: some-stream
-      # SOME_QUEUE_TO_TOPIC_SUB: |
-      #   topic_name: some-topic
-      #   queue_name: some-queue
-      # SOME_QUEUE_TO_BUCKET_SUB: |
-      #   bucket: some-bucket
-      #   queue_name: some-queue
-      #   events:
-      #     - s3:ObjectCreated:*
-      # SOME_S3_UPLOAD: |
-      #   filename: /provisioner/requirements.txt
-      #   key: requirements.txt
-      #   bucket: some-bucket
-      # SOME_DYNAMODB_TABLE: |
-      #   name: some-table
-      #   attributes:
-      #     mainId: S
-      #     createdAt: S
-      #     name: S
-      #   key_schema:
-      #     mainId: HASH
-      #     createdAt: RANGE
-      #   throughput:
-      #     read: 10
-      #     write: 5
-      #   global_secondary_indexes:
-      #     - index_name: SomeGlobalIndex
-      #       projection: ALL
-      #       throughput:
-      #         read: 10
-      #         write: 5
-      #       key_schema:
-      #         name: HASH
-      #         createdAt: RANGE
-      #   local_secondary_indexes:
-      #     - index_name: SomeLocalIndex
-      #       projection: ALL
-      #       key_schema:
-      #         mainId: HASH
-      #         name: RANGE
+      SOME_BUCKET_NAME: some-bucket
+      SOME_OTHER_BUCKET_NAME: |
+        name: some-other-bucket
+      SOME_NOT_FAILED_BUCKET_NAME: |
+        name: some-not-failed-bucket
+      SOME_QUEUE_NAME: |
+        name: some-queue
+      SOME_TOPIC_NAME: |
+        name: some-topic
+      SOME_SSM_PARAMETER: |
+        key: some
+        value: key-value-combo
+      SOME_STREAM_NAME: some-stream
+      SOME_QUEUE_TO_TOPIC_SUB: |
+        topic_name: some-topic
+        queue_name: some-queue
+      SOME_QUEUE_TO_BUCKET_SUB: |
+        bucket: some-bucket
+        queue_name: some-queue
+        events:
+          - s3:ObjectCreated:*
+      SOME_S3_UPLOAD: |
+        filename: /provisioner/requirements.txt
+        key: requirements.txt
+        bucket: some-bucket
+      SOME_DYNAMODB_TABLE: |
+        name: some-table
+        attributes:
+          mainId: S
+          createdAt: S
+          name: S
+        key_schema:
+          mainId: HASH
+          createdAt: RANGE
+        throughput:
+          read: 10
+          write: 5
+        global_secondary_indexes:
+          - index_name: SomeGlobalIndex
+            projection: ALL
+            throughput:
+              read: 10
+              write: 5
+            key_schema:
+              name: HASH
+              createdAt: RANGE
+        local_secondary_indexes:
+          - index_name: SomeLocalIndex
+            projection: ALL
+            key_schema:
+              mainId: HASH
+              name: RANGE
     volumes:
       - ./awsmock-credentials:/root/.aws/credentials
       - ./example-assets:/aws-local/example-assets

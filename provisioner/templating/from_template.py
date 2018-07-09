@@ -1,7 +1,7 @@
 import os
 import contextlib
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional, Callable
 
 import yaml
 
@@ -13,12 +13,15 @@ import aws.kinesis as kinesis
 import aws.sns as sns
 import aws.dynamodb as dynamodb
 import aws.subscriptions as subscriptions
+import validator
 
 TEMPLATE_VARIABLE_NAME = 'AWS_LOCAL_TEMPLATE'
 TEMPLATE_PATH_VARIABLE = 'AWS_LOCAL_TEMPLATE_PATH'
 
 
-def _get_resource_stubs(template_string: str) -> Dict[str, List[Dict[str, Any]]]:
+def _get_resource_stubs(template_string: str,
+                        validator_fn: Optional[Callable]=None
+                        ) -> Dict[str, List[Dict[str, Any]]]:
     resource_stubs = {
         's3': [],
         'sqs': [],
@@ -35,6 +38,8 @@ def _get_resource_stubs(template_string: str) -> Dict[str, List[Dict[str, Any]]]
         return resource_stubs
 
     template = yaml.load(template_string)
+
+    validator.validate_template(template)
 
     for key, value in template.get('resources', {}).items():
         resource_type = value.get('type', '')
@@ -65,7 +70,9 @@ def _get_resource_stubs(template_string: str) -> Dict[str, List[Dict[str, Any]]]
     return resource_stubs
 
 
-def get_resource_stubs_from_template_file() -> Dict[str, Dict[str, str]]:
+def get_resource_stubs_from_template_file(
+        validator_fn: Optional[Callable]=None
+        ) -> Dict[str, Dict[str, str]]:
     template_path = os.getenv(TEMPLATE_PATH_VARIABLE)
 
     template_string = ''
@@ -78,7 +85,9 @@ def get_resource_stubs_from_template_file() -> Dict[str, Dict[str, str]]:
     return _get_resource_stubs(template_string)
 
 
-def get_resource_stubs_from_template_variable() -> Dict[str, Dict[str, str]]:
+def get_resource_stubs_from_template_variable(
+        validator_fn: Optional[Callable]=None
+        ) -> Dict[str, Dict[str, str]]:
     template_string = os.getenv(TEMPLATE_VARIABLE_NAME)
 
     return _get_resource_stubs(template_string)

@@ -6,7 +6,7 @@ import templating.from_env_vars as from_env_vars
 import templating.from_template as from_template
 
 
-def main():
+def provision_resources():
     aws.common.wait_for_connection(0)
 
     resource_stub_list = [
@@ -37,4 +37,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    provision_resources()

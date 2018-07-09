@@ -55,7 +55,6 @@ services:
 Example template:
 
 ```yaml
-# Optional versioning parameter. Not used right now, but might be useful to enable legacy formats.
 version: '1.0'
 
 # Dictionary of all resources to provision
@@ -66,30 +65,10 @@ resources:
     name: storage-bucket-eu-west-1
 ```
 
-####  `[version]` _Optional_
-
-Specifies what template parser version to use. Currently doesn't matter.
-
-```yaml
-version: '1.0'
-```
-
-#### `resources` **Required**
-
-The resources to create/update. Each key should contain a resource to create.
-
-```yaml
-resources:
-
-  storage_bucket:
-    type: bucket
-    name: storage-bucket-eu-west-1
-```
-
-Resource definitions can be found in the file `resource_definitions.md`
+Schema definition can be found in [provisioner/schemas/resource_schema_v1.yaml](provisioner/schemas/resource_schema_v1.yaml).
 
 ---
 
 ### Provisioning through separate environment variables
 
-Resources can be provided using environment variables, described here: `environment_resources_definitions.md`
+Schema definition can be found in [provisioner/schemas/resource_schema_environment_variables.yaml](provisioner/schemas/resource_schema_environment_variables.yaml).

@@ -36,8 +36,8 @@ def create_resources(resource_stubs: Dict[str, List[Dict[str, Any]]]) -> Dict[st
             topic.get('name')
         )
 
-    for key_combo in resource_stubs['ssm']:
-        ssm.provision_key(key_combo['key'], key_combo['value'])
+    for ssm_parameter in resource_stubs['ssm']:
+        ssm.provision_key(ssm_parameter['key'], ssm_parameter['value'])
 
     for table in resource_stubs['dynamodb']:
         resources['tables'][table['name']] = dynamodb.create_table(table)
