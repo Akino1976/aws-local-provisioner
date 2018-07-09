@@ -46,10 +46,8 @@ class ParameterTypes(enum.Enum):
 def validate_template(data: dict):
     validation_errors = validator_v1.validate(data)
 
-    if validation_errors is None:
-        return
-
-    raise validation_errors
+    if validation_errors is not None:
+        raise validation_errors
 
 
 def validate_environment_variable(value: Union[dict, str],
@@ -58,7 +56,5 @@ def validate_environment_variable(value: Union[dict, str],
         model_type.value: value,
     })
 
-    if validation_errors is None:
-        return
-
-    raise validation_errors
+    if validation_errors is not None:
+        raise validation_errors
