@@ -24,3 +24,9 @@ run-moto-provisioner: build-provisioner build-moto-aws-mock
 
 build-moto-aws-mock:
 	docker-compose build moto-aws-mock
+
+date:
+	@echo $(CURRENT_DATE)
+
+version:
+	@echo ${VERSION}
