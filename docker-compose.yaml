@@ -65,7 +65,6 @@ services:
               mainId: HASH
               name: RANGE
     volumes:
-      - ./awsmock-credentials:/root/.aws/credentials
       - ./example-assets:/aws-local/example-assets
     depends_on:
       - aws-mock
@@ -140,7 +139,6 @@ services:
           #         mainId: HASH
           #         name: RANGE
     volumes:
-      - ./awsmock-credentials:/root/.aws/credentials
       - ./example-assets:/aws-local/example-assets
     depends_on:
       - moto-aws-mock

@@ -17,6 +17,9 @@ COPY . /provisioner
 COPY --from=base /usr/local/lib/python3.6/site-packages \
   /usr/local/lib/python3.6/site-packages
 
+RUN mkdir -p /root/.aws; \
+  cp /provisioner/assets/awsmock-credentials /root/.aws/credentials
+
 ENTRYPOINT [ "python" ]
 
 CMD [ "provisioner.py" ]

@@ -42,14 +42,27 @@ version: '2'
 services:
 
   provisioner:
-    image: aws-local-provisioner:latest
+    image: bambora-dkr.jfrog.io/aws-local-provisioner
     environment:
+      S3_HOST: aws-mock:3000
       AWS_LOCAL_TEMPLATE: |
         version: '2.0'
         resources:
           storage_bucket:
             type: bucket
             name: storage-bucket-eu-west-1
+    depends_on:
+      - aws-mock
+
+  aws-mock:
+    image: localstack/localstack
+    environment:
+      DEFAULT_REGION: eu-west-1
+      SERVICES: s3:3000
+      FORCE_NONINTERACTIVE: 'true'
+      HOSTNAME: aws-mock
+      HOSTNAME_EXTERNAL: aws-mock
+      DEBUG: 0
 ```
 
 Example template:

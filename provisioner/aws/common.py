@@ -40,11 +40,27 @@ def get_client(service_name: str):
     return boto3.client(**params)
 
 
-def wait_for_connection(initial_timeout=5):
+def wait_for_connection(resource_types=List[str],
+                        initial_timeout: Optional[int]=5):
     attempts = 0
 
-    s3_client = get_client('s3')
-    sqs_client = get_client('sqs')
+    checks = []
+
+    if 's3' in resource_types:
+        s3_client = get_client('s3')
+        checks.append(lambda: s3_client.list_buckets())
+    if 'sqs' in resource_types:
+        sqs_client = get_client('sqs')
+        checks.append(lambda: sqs_client.list_queues())
+    if 'sns' in resource_types:
+        sns_client = get_client('sns')
+        checks.append(lambda: sns_client.list_topics())
+    if 'dynamodb' in resource_types:
+        dynamodb_client = get_client('dynamodb')
+        checks.append(lambda: dynamodb_client.list_tables())
+    if 'kinesis' in resource_types:
+        kinesis_client = get_client('kinesis')
+        checks.append(lambda: kinesis_client.list_streams())
 
     print('Attempting to connect to aws-mock')
 
@@ -52,11 +68,8 @@ def wait_for_connection(initial_timeout=5):
 
     while attempts < 30:
         try:
-            s3_client.list_buckets()
-            print('Connected to s3!')
-
-            sqs_client.list_queues()
-            print('Connected to sqs!')
+            for check in checks:
+                check()
 
             print('Connected to aws-mock!')
             print('')

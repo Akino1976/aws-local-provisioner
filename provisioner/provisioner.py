@@ -7,8 +7,6 @@ import templating.from_template as from_template
 
 
 def provision_resources():
-    aws.common.wait_for_connection(0)
-
     resource_stub_list = [
         from_template.get_resource_stubs_from_template_file(),
         from_template.get_resource_stubs_from_template_variable(),
@@ -26,6 +24,15 @@ def provision_resources():
                 resource_stubs.get(key, []) + stub_value,
                 []
             )
+
+    aws.common.wait_for_connection(
+        resource_types=[
+            stub_type
+            for stub_type, value in resource_stubs.items()
+            if len(value) > 0
+        ],
+        initial_timeout=0,
+    )
 
     print('Creating resources:')
     print('')
