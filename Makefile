@@ -13,7 +13,7 @@ build-provisioner:
 		-t aws-local-provisioner:latest \
 		-t aws-local-provisioner:$(VERSION) \
 		-t $(ARTIFACTORY_URL)/aws-local-provisioner:latest \
-		-t $(ARTIFACTORY_URL)/aws-local-provisioner:VERSION \
+		-t $(ARTIFACTORY_URL)/aws-local-provisioner:$(VERSION) \
 		provisioner
 
 run-provisioner: build-provisioner

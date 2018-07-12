@@ -7,7 +7,7 @@ to use for local development and testing.
 
 All you do is provide the resources in any (or all) of the ways described below!
 
-## Supported resources
+## Supported resources/actions
 
 - S3 buckets
   - S3 file uploads
