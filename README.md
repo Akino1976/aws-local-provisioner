@@ -46,7 +46,7 @@ services:
     environment:
       S3_HOST: aws-mock:3000
       AWS_LOCAL_TEMPLATE: |
-        version: '2.0'
+        version: '1.0'
         resources:
           storage_bucket:
             type: bucket
