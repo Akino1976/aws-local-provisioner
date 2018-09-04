@@ -139,16 +139,17 @@ def _get_global_secondary_updates(shorthand_indexes: List[Dict[str, Any]],
                 )
             })
 
-    for modify_index in global_secondary_indexes:
-        existing_index = common.find(
-            current_global_secondary_indexes,
-            lambda index: modify_index['IndexName'] == index['IndexName']
-        )
+    if global_secondary_indexes is not None:
+        for modify_index in global_secondary_indexes:
+            existing_index = common.find(
+                current_global_secondary_indexes,
+                lambda index: modify_index['IndexName'] == index['IndexName']
+            )
 
-        if existing_index is None:
-            output.append({
-                'Create': modify_index,
-            })
+            if existing_index is None:
+                output.append({
+                    'Create': modify_index,
+                })
 
     return output
 

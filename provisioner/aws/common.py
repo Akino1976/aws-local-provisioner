@@ -90,9 +90,10 @@ def clear_nones(dct: dict) -> dict:
 
 
 def find(coll: List[Any], predicate: Callable[[Any], bool]) -> Any:
-    for item in coll:
-        if predicate(item):
-            return item
+    if coll is not None:
+        for item in coll:
+            if predicate(item):
+                return item
 
     return None
 

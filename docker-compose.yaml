@@ -38,32 +38,16 @@ services:
         key: requirements.txt
         bucket: some-bucket
       SOME_DYNAMODB_TABLE: |
-        name: some-table
+        name: some-dynamodb-table
         attributes:
           mainId: S
           createdAt: S
-          name: S
         key_schema:
           mainId: HASH
           createdAt: RANGE
         throughput:
           read: 10
           write: 5
-        global_secondary_indexes:
-          - index_name: SomeGlobalIndex
-            projection: ALL
-            throughput:
-              read: 10
-              write: 5
-            key_schema:
-              name: HASH
-              createdAt: RANGE
-        local_secondary_indexes:
-          - index_name: SomeLocalIndex
-            projection: ALL
-            key_schema:
-              mainId: HASH
-              name: RANGE
     volumes:
       - ./example-assets:/aws-local/example-assets
     depends_on:
