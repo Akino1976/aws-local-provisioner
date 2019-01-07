@@ -1,8 +1,9 @@
-FROM python:3.6-alpine3.7
+FROM python:3.7-alpine3.8
 
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories; \
     apk update; \
-    apk add --no-cache build-base python3-dev alpine-sdk libffi
+    apk add --no-cache \
+      build-base python3-dev alpine-sdk libffi libffi-dev openssl openssl-dev
 
 ADD requirements.txt /tmp/
 

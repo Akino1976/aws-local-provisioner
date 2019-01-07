@@ -41,8 +41,8 @@ resources:
 
   some_s3_upload:
     type: s3_upload
-    filename: /provisioner/requirements.txt
-    key: requirements.txt
+    filename: /aws-local/example-assets/some_file.txt
+    key: some_file.txt
     bucket: some-bucket
 
   some_dynamodb_table:

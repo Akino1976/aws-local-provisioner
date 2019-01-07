@@ -1,7 +1,6 @@
 from functools import reduce
 
 import aws
-import aws
 import templating.from_env_vars as from_env_vars
 import templating.from_template as from_template
 

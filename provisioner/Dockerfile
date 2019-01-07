@@ -1,4 +1,4 @@
-FROM python:3.6-alpine3.7 AS base
+FROM python:3.7-alpine3.8 AS base
 
 WORKDIR /provisioner
 
@@ -6,7 +6,7 @@ COPY requirements.txt /provisioner/requirements.txt
 
 RUN pip install --requirement requirements.txt
 
-FROM python:3.6-alpine3.7
+FROM python:3.7-alpine3.8
 
 WORKDIR /provisioner
 
@@ -14,8 +14,8 @@ RUN mkdir -p /provisioner
 
 COPY . /provisioner
 
-COPY --from=base /usr/local/lib/python3.6/site-packages \
-  /usr/local/lib/python3.6/site-packages
+COPY --from=base /usr/local/lib/python3.7/site-packages \
+  /usr/local/lib/python3.7/site-packages
 
 RUN mkdir -p /root/.aws; \
   cp /provisioner/assets/awsmock-credentials /root/.aws/credentials
@@ -23,3 +23,5 @@ RUN mkdir -p /root/.aws; \
 ENTRYPOINT [ "python" ]
 
 CMD [ "provisioner.py" ]
+
+ENV AWS_SHARED_CREDENTIALS_FILE=/provisioner/awsmock-credentials
