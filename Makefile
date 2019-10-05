@@ -12,10 +12,7 @@ build-provisioner:
 	docker build\
 		-t aws-local-provisioner:latest \
 		-t aws-local-provisioner:$(VERSION) \
-		-t $(GITHUB_URL)/aws-local-provisioner:latest \
-		-t $(GITHUB_URL)/aws-local-provisioner:$(VERSION )\
-		-f provisioner/Dockerfile \
-		.
+		provisioner
 
 run-provisioner: build-provisioner
 	docker-compose run --rm provisioner
