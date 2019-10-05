@@ -48,10 +48,6 @@ services:
             type: ssm_parameter
             key: some-secret
             value: oh-so-secret
-          # Sadly, moto doesn't seem to support
-          #   - dynamodb_table
-          #   - subscription:queue:topic
-          #   - subscription:queue:bucket
     volumes:
       - ./example-assets:/aws-local/example-assets
     depends_on:
@@ -60,7 +56,7 @@ services:
   # -------- AWS Mocks --------
 
   aws-mock:
-    image: localstack/localstack:0.8.6
+    image: localstack/localstack:0.10.3
     environment:
       DEFAULT_REGION: eu-west-1
       SERVICES: s3:3000,sqs:3001,ssm:3002,sns:3003,kinesis:3004,dynamodb:3005

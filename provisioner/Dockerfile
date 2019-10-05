@@ -1,4 +1,4 @@
-FROM python:3.7-alpine3.8 AS base
+FROM python:3.7-alpine3.10 AS base
 
 WORKDIR /provisioner
 
@@ -6,7 +6,7 @@ COPY requirements.txt /provisioner/requirements.txt
 
 RUN pip install --requirement requirements.txt
 
-FROM python:3.7-alpine3.8
+FROM python:3.7-alpine3.10
 
 WORKDIR /provisioner
 
