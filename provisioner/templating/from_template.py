@@ -37,7 +37,7 @@ def _get_resource_stubs(template_string: str,
     if not template_string:
         return resource_stubs
 
-    template = yaml.load(template_string)
+    template = yaml.load(template_string, Loader=yaml.FullLoader)
 
     validator.validate_template(template)
 

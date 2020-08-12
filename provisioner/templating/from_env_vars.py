@@ -34,35 +34,35 @@ def get_resource_stubs() -> Dict[str, List[Any]]:
 
         if key.endswith('BUCKET_NAME'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.BUCKET
             )
 
             resource_stubs['s3'].append(common.parse_stub(value))
         elif key.endswith('QUEUE_NAME'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.QUEUE
             )
 
             resource_stubs['sqs'].append(common.parse_stub(value))
         elif key.endswith('TOPIC_NAME'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.TOPIC
             )
 
             resource_stubs['sns'].append(common.parse_stub(value))
         elif key.endswith('SSM_PARAMETER'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.SSM_PARAMETER
             )
 
             resource_stubs['ssm'].append(common.parse_stub(value))
         elif key.endswith('QUEUE_TO_TOPIC_SUB'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.SUBSCRIPTION_QUEUE_TOPIC
             )
 
@@ -71,7 +71,7 @@ def get_resource_stubs() -> Dict[str, List[Any]]:
             )
         elif key.endswith('QUEUE_TO_BUCKET_SUB'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.SUBSCRIPTION_QUEUE_BUCKET
             )
 
@@ -80,21 +80,21 @@ def get_resource_stubs() -> Dict[str, List[Any]]:
             )
         elif key.endswith('STREAM_NAME'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.STREAM
             )
 
             resource_stubs['kinesis'].append(common.parse_stub(value))
         elif key.endswith('S3_UPLOAD'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.S3_UPLOAD
             )
 
             resource_stubs['s3_files'].append(common.parse_stub(value))
         elif key.endswith('DYNAMODB_TABLE'):
             validator.validate_environment_variable(
-                yaml.load(value),
+                yaml.load(value, Loader=yaml.FullLoader),
                 validator.ParameterTypes.DYNAMODB_TABLE
             )
 
