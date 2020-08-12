@@ -116,7 +116,7 @@ def compare_unordered_lists(list1: list, list2: list) -> bool:
 
 
 def _get_stub_with_name(value: Union[str, Dict[str, Any]]) -> Dict[str, Any]:
-    parsed_value = yaml.load(value) \
+    parsed_value = yaml.load(value, Loader=yaml.FullLoader) \
         if isinstance(value, str) \
         else value
 

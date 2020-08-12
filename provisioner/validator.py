@@ -6,7 +6,7 @@ from typing import Union
 import yaml
 import jsonschema
 
-from jsonschema.validators import Draft4Validator
+from jsonschema import Draft7Validator
 
 schema_v1_path = os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
@@ -24,10 +24,10 @@ with open(schema_v1_path) as file:
 with open(schema_environment_variables_path) as file:
     template_environment_variables = file.read()
 
-validator_v1 = Draft4Validator(yaml.load(template_v1))
+validator_v1 = Draft7Validator(yaml.load(template_v1, Loader=yaml.FullLoader))
 
-environment_parameter_validator = Draft4Validator(
-    yaml.load(template_environment_variables)
+environment_parameter_validator = Draft7Validator(
+    yaml.load(template_environment_variables, Loader=yaml.FullLoader)
 )
 
 
